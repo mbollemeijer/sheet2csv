@@ -1,0 +1,25 @@
+[
+    {
+        "sheetName": "Sheet1",
+        "startRowIndex": 0,
+        "endRowIndex": 100,
+        "outputFileName": "gs1_attributes.csv",
+        "filters": [{
+            "columnIndex": 123,
+            "operator": "CONTAINS | EQUALS | NOT_EQUEALS | NOT_CONTAINS",
+            "value": "SOME Filter Value here"
+        }]
+    },
+    {
+        "sheetName": "Sheet2",
+        "startRowIndex": 0,
+        "endRowIndex": 100,
+        "outputFileName": "gs1_attributes2.csv",
+        "filters": [{
+            "columnIndex": 123,
+            "operator": "CONTAINS | EQUALS | NOT_EQUEALS | NOT_CONTAINS",
+            "value": "SOME Filter Value here"
+        }]
+    }
+
+]
