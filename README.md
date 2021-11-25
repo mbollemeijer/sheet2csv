@@ -41,6 +41,9 @@ Maybe, but I wanted to try Rust and thought this would be a fun usecase to try a
         - [ ] Operator: Not contains
    - [ ] Seperator configurable
 - [ ] Run without config
+- [ ] CI/CD
+- [ ] Make it available in AUR
+- [ ] Cross platform ?
 
 **NOTE: Strings are (for) now always wrappend in double quotes -> "**   
 **NOTE: Default Seperator is currentyly semicolon -> ;**
@@ -56,9 +59,8 @@ Currently only source code compilation only is supported.
 One unqiue thing (I think) is that you can customize the conversion based on config, let me show you.
 Example config for the sheet that resides in `<project-root>/examples/test.xlsx`  
 
-
+`config.json`
 ```json 
-config.json
 [
     {
         "sheetName": "Sheet1",
