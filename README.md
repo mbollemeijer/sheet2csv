@@ -1,6 +1,6 @@
 # sheet2csv
 
-sheet2csv is a handy tool for those who need to convert large Excel sheets on a regular basis.
+sheet2csv is a handy tool for those who need to convert large Excel sheets to csv's on a regular basis.
 
 ### Why ?
 For one of the projects I work on on a daily basis, we occasionally need to convert certain .xlsx files to separate .csv files.   
@@ -16,7 +16,7 @@ Maybe, but I wanted to try Rust and thought this would be a fun usecase to try a
  - cargo, that ships with Rus.
  - Git
 
-### Dependecies
+### Dependencies
 - calamine = "0.18.0"
 - serde = { version = "1.0", features = ["derive"] }
 - serde_json = "1.0"
@@ -27,7 +27,7 @@ Maybe, but I wanted to try Rust and thought this would be a fun usecase to try a
 2. cd into the cloned repo.
 3. run `cargo build` 
 
-### Features
+### Features / TODOS
 - [x] Converts an Excel sheet to a csv file based on configuration
 - [x] Configurable through a config file  
    - [x] Grab sheet by name
@@ -39,18 +39,18 @@ Maybe, but I wanted to try Rust and thought this would be a fun usecase to try a
         - [ ] Operator: Not eqauls
         - [ ] Operator: Contains
         - [ ] Operator: Not contains
-   - [ ] Seperator configurable
+   - [ ] Seperator configurable 
 - [ ] Run without config
 - [ ] CI/CD
 - [ ] Make it available in AUR
 - [ ] Cross platform ?
 
-**NOTE: Strings are (for) now always wrappend in double quotes -> "**   
-**NOTE: Default Seperator is currentyly semicolon -> ;**
+**NOTE: Strings are (for) now, always wrappend in double quotes -> "**   
+**NOTE: Default Seperator is currently semicolon -> ;**
 
 ### How to use sheet2csv
 
-Currently only source code compilation only is supported.
+Currently only source code compilation is supported.
 
 1. `cd` into folder where you cloned this repo
 2. run `cargo run -- --source=<path to xlsx> --out=<path to output dir> --config=<path to config file>`
