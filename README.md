@@ -33,7 +33,7 @@ Maybe, but I wanted to try Rust and thought this would be a fun usecase to try a
    - [x] Grab sheet by name
    - [x] Start from a row index 
    - [x] Set output file name
-   - [ ] Specify row end index
+   - [x] Specify row end index
    - [ ] Filters on column index and its contents
         - [ ] Operator: Equals
         - [ ] Operator: Not eqauls
@@ -59,17 +59,26 @@ Currently only source code compilation only is supported.
 One unqiue thing (I think) is that you can customize the conversion based on config, let me show you.
 Example config for the sheet that resides in `<project-root>/examples/test.xlsx`  
 
+### Settings
+
+| property          | example value| description |
+|--------------     |--------------|------------|
+| sheetName         | Sheet1       | Name of the sheet (tab) in the excel file|
+| outputFileName    | converted-files.csv      | Name of the file that the sheet will be converted into|
+| startRowIndex     | 10           | Numeric value, 0 when omitted |
+| endRowIndex       | 200          | Numeric value, -1 when omitted|
+
 `config.json`
 ```json 
 [
     {
         "sheetName": "Sheet1",
+        "outputFileName": "test-sheet1.csv",
         "startRowIndex": 5,
-        "outputFileName": "test-sheet1.csv"
+        "endRowIndex": 100
     },
     {
         "sheetName": "Sheet2",
-        "startRowIndex": 5, 
         "outputFileName": "test-sheet2.csv"
     }
 ]

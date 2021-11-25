@@ -1,14 +1,7 @@
 [
     {
         "sheetName": "Sheet1",
-        "startRowIndex": 5,
-        "endRowIndex": 100,
-        "outputFileName": "test-sheet1.csv",
-        "filters": [{
-            "columnIndex": 123,
-            "operator": "CONTAINS | EQUALS | NOT_EQUEALS | NOT_CONTAINS",
-            "value": "SOME Filter Value here"
-        }]
+        "outputFileName": "test-sheet1.csv"
     },
     {
         "sheetName": "Sheet2",

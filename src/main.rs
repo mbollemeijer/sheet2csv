@@ -10,7 +10,29 @@ use std::io::{BufWriter, Write};
 struct SheetSettings {
     sheet_name: String,
     output_file_name: String,
-    start_row_index: i8,
+    start_row_index: Option<i32>,
+    end_row_index: Option<i32>,
+}
+
+impl SheetSettings {
+
+    /// Returns the value configured for this sheet
+    /// or the default index row which is zero (0)
+    fn start_index_or_default(&self) -> i32 {
+        match self.start_row_index {
+            None => 0,
+            Some(value) => value
+        }
+    }
+
+    /// Returns the value configured for this sheet
+    /// or the defaul value which is -1
+    fn end_index_or_default(&self) -> i32 {
+        match self.end_row_index {
+            None => -1,
+            Some(value) => value
+        }
+    }
 }
 
 fn main() {
@@ -31,19 +53,17 @@ fn main() {
 fn convert_workbook_to_csv(source_file: &str, output_path: &str, settings: &Vec<SheetSettings>) -> std::io::Result<()> {
 
     for setting in settings {
-
+    
         let mut workbook: Xlsx<_> = open_workbook(source_file).expect("Cannot open file");
         // Read whole worksheet data and provide some statistics
         if let Some(Ok(sheet)) = workbook.worksheet_range(&setting.sheet_name) {
             let sce = PathBuf::from(output_path.to_owned() + "/" + &setting.output_file_name);
             let dest = sce.with_extension("csv");
             let mut dest = BufWriter::new(File::create(dest).unwrap());
-
-            
             for (index, row) in sheet.rows().enumerate() {
-                if index >= setting.start_row_index as usize {
+                if index >= setting.start_index_or_default() as usize 
+                    && index <= setting.end_index_or_default() as usize {
                     for (_i, c) in row.iter().enumerate() {
-
                         match *c {
                             DataType::Empty => write!(dest, ";"),
                             DataType::String(ref s) => write!(dest, "\"{}\";", s),
@@ -55,6 +75,8 @@ fn convert_workbook_to_csv(source_file: &str, output_path: &str, settings: &Vec<
                         }?;
                     }
                     write!(dest, "\n")?;
+                } else {
+                    break;
                 }
             }
         }
