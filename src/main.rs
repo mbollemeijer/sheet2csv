@@ -12,6 +12,7 @@ struct SheetSettings {
     output_file_name: String,
     start_row_index: Option<i32>,
     end_row_index: Option<i32>,
+    separator: Option<String>
 }
 
 impl SheetSettings {
@@ -33,13 +34,19 @@ impl SheetSettings {
             Some(value) => value
         }
     }
+
+    fn separator_or_default(&self) -> String {
+        match &self.separator {
+            None => String::from(";"),
+            Some(value) => value.to_string()
+        }
+    }
 }
 
 fn main() {
 
     // For debug purposes
     let args: Vec<String> = env::args().collect();
-    println!("all arguments in a list are {:?}", &args);
     
     // Grabbing the arguments
     let source_file = get_program_argument(&args, "--source");
@@ -52,26 +59,27 @@ fn main() {
 
 fn convert_workbook_to_csv(source_file: &str, output_path: &str, settings: &Vec<SheetSettings>) -> std::io::Result<()> {
 
+    // Read whole worksheet data and provide some statistics
+    let mut workbook: Xlsx<_> = open_workbook(source_file).expect("Cannot open file");
     for setting in settings {
     
-        let mut workbook: Xlsx<_> = open_workbook(source_file).expect("Cannot open file");
-        // Read whole worksheet data and provide some statistics
         if let Some(Ok(sheet)) = workbook.worksheet_range(&setting.sheet_name) {
             let sce = PathBuf::from(output_path.to_owned() + "/" + &setting.output_file_name);
             let dest = sce.with_extension("csv");
             let mut dest = BufWriter::new(File::create(dest).unwrap());
+
             for (index, row) in sheet.rows().enumerate() {
                 if index >= setting.start_index_or_default() as usize 
                     && index <= setting.end_index_or_default() as usize {
                     for (_i, c) in row.iter().enumerate() {
                         match *c {
-                            DataType::Empty => write!(dest, ";"),
-                            DataType::String(ref s) => write!(dest, "\"{}\";", s),
-                            DataType::Int(ref i) => write!(dest, "{};", i),
-                            DataType::Float(ref f) => write!(dest, "{};", f),
-                            DataType::Bool(ref b) => write!(dest, "{};", b),
-                            DataType::DateTime(ref dt) => write!(dest, "{};",dt),
-                            DataType::Error(ref e) => write!(dest, "{};", e),
+                            DataType::Empty => write!(dest, "{}", setting.separator_or_default()),
+                            DataType::String(ref s) => write!(dest, "\"{}\"{}", s, setting.separator_or_default()),
+                            DataType::Int(ref i) => write!(dest, "{}{}", i, setting.separator_or_default()),
+                            DataType::Float(ref f) => write!(dest, "{}{}", f, setting.separator_or_default()),
+                            DataType::Bool(ref b) => write!(dest, "{}{}", b, setting.separator_or_default()),
+                            DataType::DateTime(ref dt) => write!(dest, "{}{}",dt, setting.separator_or_default()),
+                            DataType::Error(ref e) => write!(dest, "{}{}", e, setting.separator_or_default()),
                         }?;
                     }
                     write!(dest, "\n")?;

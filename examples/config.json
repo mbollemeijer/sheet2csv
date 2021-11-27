@@ -1,7 +1,8 @@
 [
     {
         "sheetName": "Sheet1",
-        "outputFileName": "test-sheet1.csv"
+        "outputFileName": "test-sheet1.csv",
+        "separator": ","
     },
     {
         "sheetName": "Sheet2",
