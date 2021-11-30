@@ -59,6 +59,7 @@ fn main() {
 
 fn convert_workbook_to_csv(source_file: &str, output_path: &str, settings: &Vec<SheetSettings>) -> std::io::Result<()> {
 
+    println!("{}", source_file);
     // Read whole worksheet data and provide some statistics
     let mut workbook: Xlsx<_> = open_workbook(source_file).expect("Cannot open file");
     for setting in settings {
@@ -69,6 +70,7 @@ fn convert_workbook_to_csv(source_file: &str, output_path: &str, settings: &Vec<
             let mut dest = BufWriter::new(File::create(dest).unwrap());
 
             for (index, row) in sheet.rows().enumerate() {
+                println!("row inded {} -> content {:?} ", index, &row);
                 if index >= setting.start_index_or_default() as usize 
                     && index <= setting.end_index_or_default() as usize {
                     for (_i, c) in row.iter().enumerate() {
@@ -83,9 +85,7 @@ fn convert_workbook_to_csv(source_file: &str, output_path: &str, settings: &Vec<
                         }?;
                     }
                     write!(dest, "\n")?;
-                } else {
-                    break;
-                }
+                } 
             }
         }
     }
