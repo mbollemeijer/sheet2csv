@@ -117,7 +117,7 @@ fn escape_if_needed(cell_value: &str) -> String {
         // TODO 
         // This should also be set through conversion settings.
         // Something like: replace: ("something that should match", "")
-        escaped_value = escaped_value.replace("\"", "u+0022");
+        escaped_value = escaped_value.replace("\"", "\"\"");
     }
 
     
