@@ -64,17 +64,18 @@ fn convert_workbook_to_csv(source_file: &str, output_path: &str, settings: &Vec<
     for setting in settings {
     
         if let Some(Ok(sheet)) = workbook.worksheet_range(&setting.sheet_name) {
+
             let sce = PathBuf::from(output_path.to_owned() + "/" + &setting.output_file_name);
             let dest = sce.with_extension("csv");
             let mut dest = BufWriter::new(File::create(dest).unwrap());
-
+            
             for (index, row) in sheet.rows().enumerate() {
                 if index >= setting.start_index_or_default() as usize 
                     && index <= setting.end_index_or_default() as usize {
                     for (_i, c) in row.iter().enumerate() {
                         match *c {
                             DataType::Empty => write!(dest, "{}", setting.separator_or_default()),
-                            DataType::String(ref s) => write!(dest, "\"{}\"{}", s, setting.separator_or_default()),
+                            DataType::String(ref s) => write!(dest, "{}{}", escape_if_needed(s), setting.separator_or_default()),
                             DataType::Int(ref i) => write!(dest, "{}{}", i, setting.separator_or_default()),
                             DataType::Float(ref f) => write!(dest, "{}{}", f, setting.separator_or_default()),
                             DataType::Bool(ref b) => write!(dest, "{}{}", b, setting.separator_or_default()),
@@ -82,12 +83,50 @@ fn convert_workbook_to_csv(source_file: &str, output_path: &str, settings: &Vec<
                             DataType::Error(ref e) => write!(dest, "{}{}", e, setting.separator_or_default()),
                         }?;
                     }
-                    write!(dest, "\n")?;
+                    write!(dest, "\r\n")?;
                 } 
             }
         }
     }
     Ok(())
+}
+
+fn escape_if_needed(cell_value: &str) -> String {
+    
+    let mut escaped_value = String::from(cell_value);
+
+
+    if escaped_value.contains("\n") {
+        escaped_value = escaped_value.replace("\n", "");
+    }
+
+    if escaped_value.contains("\r"){
+        escaped_value = escaped_value.replace("\r", "");
+    }
+
+    if escaped_value.contains("\r\n") {
+        escaped_value = escaped_value.replace("\r\n", "");
+    }
+
+    if escaped_value.contains("\n\r") {
+        escaped_value = escaped_value.replace("\n\r", "");
+    }
+
+    if escaped_value.contains("\"") {
+
+        // TODO 
+        // This should also be set through conversion settings.
+        // Something like: replace: ("something that should match", "")
+        escaped_value = escaped_value.replace("\"", "u+0022");
+    }
+
+    
+    // TODO
+    // This should Dynamic by the separator you have set.
+    
+   // escaped_value = format!("\"{}\"", escaped_value);
+   // escaped_value
+    format!("\"{}\"", escaped_value)
 }
 
 fn get_settings(path: &str) -> Vec<SheetSettings> {
