@@ -85,6 +85,8 @@ fn convert_workbook_to_csv(settings: Settings) -> std::io::Result<()> {
     // Read whole worksheet data and provide some statistics
     println!("opening workbook: {}", &settings.source_file);
     let mut workbook: Xlsx<_> = open_workbook(&settings.source_file).expect(format!("Could not open file @ {} ", &settings.source_file).as_str());
+    
+    let main_subs = settings.substitutions.as_ref();
 
     for sheet_settings in settings.sheet_settings {
         let sheet_time = Instant::now();
@@ -110,6 +112,24 @@ fn convert_workbook_to_csv(settings: Settings) -> std::io::Result<()> {
                 Some(v) => v.to_string()
             };
 
+            // TODO this is some ugly stuff here
+            //
+            // Below combines the specified subs on main config and sheet config
+            // Should be moved to its own function
+            let main_subs_cloned = main_subs.clone();
+            let mut subs: Vec<&Substitution> = Vec::new();
+            for sub in main_subs_cloned.unwrap() {
+                subs.push(sub.clone());
+            }
+
+            if sheet_settings.substitutions.is_some() {
+                for sheet_sub in sheet_settings.substitutions.as_ref().unwrap() {
+                    subs.push(&sheet_sub);
+                }
+            }
+            let subs = Some(subs);
+
+
             for (index, row) in sheet.rows().enumerate() {
                 if index >= sheet_settings.start_index_or_default() as usize 
                     && index <= sheet_settings.end_index_or_default() as usize {
@@ -118,7 +138,7 @@ fn convert_workbook_to_csv(settings: Settings) -> std::io::Result<()> {
                             DataType::Empty => write!(dest, "{}", sheet_settings.separator_or_default()),
                             DataType::String(ref string_value) 
                                 => write!(dest, "{}{s}", 
-                                          process_cell(&settings.substitutions, &wrap, &wrap_char, string_value), s = sheet_settings.separator_or_default()), 
+                                          process_cell(&subs, &wrap, &wrap_char, string_value), s = sheet_settings.separator_or_default()), 
                             DataType::Int(ref i) => write!(dest, "{}{}", i, sheet_settings.separator_or_default()),
                             DataType::Float(ref f) => write!(dest, "{}{}", f, sheet_settings.separator_or_default()),
                             DataType::Bool(ref b) => write!(dest, "{}{}", b, sheet_settings.separator_or_default()),
@@ -137,7 +157,7 @@ fn convert_workbook_to_csv(settings: Settings) -> std::io::Result<()> {
     Ok(())
 }
 
-fn process_cell(subs: &Option<Vec<Substitution>>, wrap: &bool, wrap_char: &String, cell_value: &str) -> String {
+fn process_cell(subs: &Option<Vec<&Substitution>>, wrap: &bool, wrap_char: &String, cell_value: &str) -> String {
 
     let subbed_value = sub_values(&subs, cell_value);
     match wrap {
@@ -146,7 +166,7 @@ fn process_cell(subs: &Option<Vec<Substitution>>, wrap: &bool, wrap_char: &Strin
     }
 }
 
-fn sub_values(subs: &Option<Vec<Substitution>>, cell_value: &str) -> String {
+fn sub_values(subs: &Option<Vec<&Substitution>>, cell_value: &str) -> String {
 
     let mut subbed_value = String::from(cell_value);
     if subs.is_some() {
