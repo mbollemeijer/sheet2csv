@@ -1,0 +1,23 @@
+{
+	"sourceFile": "examples/test.xlsx",
+	"outputPath": "<absolute path to output path>",
+    "wrapStrings": true,
+    "wrapStringChar": "\"",
+    "substitutions" : [{
+           "matchOn": "\"",
+           "replaceWith": "\"\""
+       }
+    ],
+	"sheetSettings": [{
+		"sheetName": "Sheet1",
+		"outputFileName": "fancy-name-of-file1.csv",
+		"startRowIndex": 5,
+        "wrapStrings": true,
+        "wrapStringChar": "<>"
+	}, {
+		"sheetName": "Sheet2",
+		"outputFileName": "second-fancy-name-of-file.csv",
+		"startRowIndex": 4,
+        "wrapStrings": false
+	}]
+}
