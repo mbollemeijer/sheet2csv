@@ -1,4 +1,6 @@
-# sheet2csv
+# sheet2csv 
+
+[![Rust](https://github.com/mbollemeijer/sheet2csv/actions/workflows/rust.yml/badge.svg)](https://github.com/mbollemeijer/sheet2csv/actions/workflows/rust.yml)
 
 sheet2csv converts Excel/Workbook files into CSV files through a JSON config file.
 This makes repetitive conversions less error prone and more efficient.
