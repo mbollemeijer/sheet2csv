@@ -10,7 +10,7 @@ Maybe, but I wanted to try Rust and thought this would be a fun use case to try 
 
 ### Requirements
  - Rust (https://www.rust-lang.org/tools/install)
- - cargo, that hips with Rust.
+ - cargo, that ships with Rust.
  - Git
 
 ### Dependencies
