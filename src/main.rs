@@ -72,6 +72,7 @@ fn main() {
     let source_file = get_program_argument(&args, "--source");
     let output_path = get_program_argument(&args, "--out");
     let config_path = get_program_argument(&args, "--config");
+
     let settings = get_settings(config_path, source_file, output_path);
 
     // let result = convert_workbook_to_csv(settings);
@@ -117,9 +118,9 @@ fn process_row(row: &[DataType], subs: &Option<Vec<&Substitution>>, wrap_setting
         // Check if we need to wrap the value
         if wrap_settings.0 {
             write!(dest, "{wrap}{val}{wrap}{sep}", wrap = wrap_settings.1, val = cell_value, sep = wrap_settings.2)?;
+        } else {
+            write!(dest, "{val}{sep}", val=cell_value, sep= wrap_settings.2)?;
         }
-
-        write!(dest, "{val}{sep}", val=cell_value, sep= wrap_settings.2)?;
     }
 
     Ok(())
